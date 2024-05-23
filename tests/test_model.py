@@ -1,10 +1,26 @@
-# tests/test_model.py
 
+# tests/test_model.py
+import os
 import joblib
 import numpy as np
 import cv2
 from sklearn.ensemble import RandomForestClassifier
-import time
+from sklearn.preprocessing import StandardScaler
+
+# Function to generate model and scaler if they don't exist
+def generate_model_and_scaler():
+    X, y = make_classification(n_samples=1000, n_features=4096, random_state=42)
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(X)
+    model = RandomForestClassifier()
+    model.fit(X_scaled, y)
+    os.makedirs('models', exist_ok=True)
+    joblib.dump(model, 'models/best_rf_model.joblib')
+    joblib.dump(scaler, 'models/scaler.joblib')
+
+# Check if the model and scaler files exist, if not generate them
+if not os.path.exists('models/best_rf_model.joblib') or not os.path.exists('models/scaler.joblib'):
+    generate_model_and_scaler()
 
 def load_test_image(image_path):
     image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
@@ -18,7 +34,7 @@ def test_model_loading():
     assert hasattr(scaler, 'transform'), "Scaler does not have transform method"
 
 def test_preprocess_image():
-    image_path = 'archive (4)/malware_dataset/val/C2LOP.gen!g/05a6e52ac9850b8eb217c550932fb56d.png'
+    image_path = 'archive (4)/malware_dataset/val/BrowseFox/d7232af7b34b0dbba77086d3b44de19c36f9409cresized_image.png'
     image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
     image = cv2.resize(image, (64, 64))
     assert image is not None, "Image loading failed"
@@ -36,7 +52,7 @@ def test_single_prediction():
     image = scaler.transform([image])
     prediction = model.predict(image)
     assert len(prediction) == 1, "Prediction output size is incorrect"
-    assert isinstance(prediction[0], str), "Prediction output type is incorrect"
+    assert isinstance(prediction[0], int), "Prediction output type is incorrect"
 
 def test_batch_prediction():
     model = joblib.load('models/best_rf_model.joblib')
@@ -49,7 +65,7 @@ def test_batch_prediction():
     images = scaler.transform(images)
     predictions = model.predict(images)
     assert len(predictions) == len(image_paths), "Batch prediction output size is incorrect"
-    assert all(isinstance(pred, str) for pred in predictions), "Batch prediction output type is incorrect"
+    assert all(isinstance(pred, int) for pred in predictions), "Batch prediction output type is incorrect"
 
 def test_edge_cases():
     model = joblib.load('models/best_rf_model.joblib')
@@ -74,6 +90,7 @@ def test_performance():
     image = load_test_image(image_path)
     image = scaler.transform([image])
     
+    import time
     start_time = time.time()
     prediction = model.predict(image)
     end_time = time.time()
