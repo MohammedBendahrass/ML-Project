@@ -52,19 +52,23 @@ def test_single_prediction():
     image = load_test_image(image_path)
     image = scaler.transform([image])
     prediction = model.predict(image)
+    if not isinstance(prediction[0], int):
+        prediction = prediction.argmax(axis=1)  # Convert probabilities to class labels if necessary
     assert len(prediction) == 1, "Prediction output size is incorrect"
     assert isinstance(prediction[0], int), "Prediction output type is incorrect"
 
 def test_batch_prediction():
     model = joblib.load('models/best_rf_model.joblib')
     scaler = joblib.load('models/scaler.joblib')
-    image_paths = ['archive (4)/malware_dataset/val/Regrun/e41f24eeb32c6b2bb8417c939dd8324f8fbd5058resized_image.png'
-                   , 'archive (4)/malware_dataset/val/InstallCore/c6fdb54efd518193e0a06aa08c3d1f16eacb04a1resized_image.png'
-                   ,'archive (4)/malware_dataset/val/MultiPlug/bf04f2de70b32abda50a756b435e9d6ed252b952resized_image.png'
-                   ,'archive (4)/malware_dataset/val/VBKrypt/d25fb0376de150f000ca1d4ded333fa9ea6b97deresized_image.png']
+    image_paths = ['archive (4)/malware_dataset/val/Regrun/e41f24eeb32c6b2bb8417c939dd8324f8fbd5058resized_image.png',
+                   'archive (4)/malware_dataset/val/InstallCore/c6fdb54efd518193e0a06aa08c3d1f16eacb04a1resized_image.png',
+                   'archive (4)/malware_dataset/val/MultiPlug/bf04f2de70b32abda50a756b435e9d6ed252b952resized_image.png',
+                   'archive (4)/malware_dataset/val/VBKrypt/d25fb0376de150f000ca1d4ded333fa9ea6b97deresized_image.png']
     images = [load_test_image(image_path) for image_path in image_paths]
     images = scaler.transform(images)
     predictions = model.predict(images)
+    if not isinstance(predictions[0], int):
+        predictions = predictions.argmax(axis=1)  # Convert probabilities to class labels if necessary
     assert len(predictions) == len(image_paths), "Batch prediction output size is incorrect"
     assert all(isinstance(pred, int) for pred in predictions), "Batch prediction output type is incorrect"
 
@@ -76,12 +80,16 @@ def test_edge_cases():
     black_image = np.zeros((64, 64)).flatten()
     black_image = scaler.transform([black_image])
     black_prediction = model.predict(black_image)
+    if not isinstance(black_prediction[0], int):
+        black_prediction = black_prediction.argmax(axis=1)  # Convert probabilities to class labels if necessary
     assert len(black_prediction) == 1, "Black image prediction output size is incorrect"
 
     # Completely white image
     white_image = np.ones((64, 64)).flatten() * 255
     white_image = scaler.transform([white_image])
     white_prediction = model.predict(white_image)
+    if not isinstance(white_prediction[0], int):
+        white_prediction = white_prediction.argmax(axis=1)  # Convert probabilities to class labels if necessary
     assert len(white_prediction) == 1, "White image prediction output size is incorrect"
 
 def test_performance():
@@ -97,4 +105,6 @@ def test_performance():
     end_time = time.time()
     elapsed_time = end_time - start_time
     
+    if not isinstance(prediction[0], int):
+        prediction = prediction.argmax(axis=1)  # Convert probabilities to class labels if necessary
     assert elapsed_time < 1, "Prediction took too long"
