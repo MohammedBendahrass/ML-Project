@@ -30,3 +30,12 @@ jobs:
       run: |
         .\venv\Scripts\activate
         pytest
+
+    # Add MLflow step to save artifacts
+    - name: Save MLflow artifacts
+      run: |
+        .\venv\Scripts\activate
+        mlflow ui &
+      env:
+        MLFLOW_TRACKING_URI: 'http://127.0.0.1:5000'
+        MLFLOW_EXPERIMENT_NAME: 'MLProjectExperiment'
