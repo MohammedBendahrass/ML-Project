@@ -6,6 +6,15 @@ import numpy as np
 import cv2
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import StandardScaler
+# tests/test_model.py
+
+import os
+import joblib
+import numpy as np
+import cv2
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.preprocessing import StandardScaler
+from sklearn.datasets import make_classification
 
 # Function to generate model and scaler if they don't exist
 def generate_model_and_scaler():
