@@ -1,11 +1,3 @@
-
-# tests/test_model.py
-import os
-import joblib
-import numpy as np
-import cv2
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.preprocessing import StandardScaler
 # tests/test_model.py
 
 import os
@@ -106,4 +98,3 @@ def test_performance():
     elapsed_time = end_time - start_time
     
     assert elapsed_time < 1, "Prediction took too long"
-
