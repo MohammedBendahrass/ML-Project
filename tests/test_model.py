@@ -52,10 +52,9 @@ def test_single_prediction():
     image = load_test_image(image_path)
     image = scaler.transform([image])
     prediction = model.predict(image)
-    if not isinstance(prediction[0], int):
-        prediction = prediction.argmax(axis=1)  # Convert probabilities to class labels if necessary
+    # Ensure prediction is a single integer or a single class label
     assert len(prediction) == 1, "Prediction output size is incorrect"
-    assert isinstance(prediction[0], int), "Prediction output type is incorrect"
+    assert isinstance(prediction[0], (int, np.integer)), "Prediction output type is incorrect"
 
 def test_batch_prediction():
     model = joblib.load('models/best_rf_model.joblib')
@@ -67,10 +66,9 @@ def test_batch_prediction():
     images = [load_test_image(image_path) for image_path in image_paths]
     images = scaler.transform(images)
     predictions = model.predict(images)
-    if not isinstance(predictions[0], int):
-        predictions = predictions.argmax(axis=1)  # Convert probabilities to class labels if necessary
+    # Ensure all predictions are integers or class labels
     assert len(predictions) == len(image_paths), "Batch prediction output size is incorrect"
-    assert all(isinstance(pred, int) for pred in predictions), "Batch prediction output type is incorrect"
+    assert all(isinstance(pred, (int, np.integer)) for pred in predictions), "Batch prediction output type is incorrect"
 
 def test_edge_cases():
     model = joblib.load('models/best_rf_model.joblib')
@@ -80,17 +78,17 @@ def test_edge_cases():
     black_image = np.zeros((64, 64)).flatten()
     black_image = scaler.transform([black_image])
     black_prediction = model.predict(black_image)
-    if not isinstance(black_prediction[0], int):
-        black_prediction = black_prediction.argmax(axis=1)  # Convert probabilities to class labels if necessary
+    # Ensure prediction is a single integer or a single class label
     assert len(black_prediction) == 1, "Black image prediction output size is incorrect"
+    assert isinstance(black_prediction[0], (int, np.integer)), "Black image prediction output type is incorrect"
 
     # Completely white image
     white_image = np.ones((64, 64)).flatten() * 255
     white_image = scaler.transform([white_image])
     white_prediction = model.predict(white_image)
-    if not isinstance(white_prediction[0], int):
-        white_prediction = white_prediction.argmax(axis=1)  # Convert probabilities to class labels if necessary
+    # Ensure prediction is a single integer or a single class label
     assert len(white_prediction) == 1, "White image prediction output size is incorrect"
+    assert isinstance(white_prediction[0], (int, np.integer)), "White image prediction output type is incorrect"
 
 def test_performance():
     model = joblib.load('models/best_rf_model.joblib')
@@ -105,6 +103,6 @@ def test_performance():
     end_time = time.time()
     elapsed_time = end_time - start_time
     
-    if not isinstance(prediction[0], int):
-        prediction = prediction.argmax(axis=1)  # Convert probabilities to class labels if necessary
     assert elapsed_time < 1, "Prediction took too long"
+    # Ensure prediction is a single integer or a single class label
+    assert isinstance(prediction[0], (int, np.integer)), "Prediction output type is incorrect"
