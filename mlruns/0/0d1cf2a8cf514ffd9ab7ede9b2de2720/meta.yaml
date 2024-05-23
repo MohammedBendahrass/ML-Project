@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/pc/Downloads/ML-Projet/mlruns/0/0d1cf2a8cf514ffd9ab7ede9b2de2720/artifacts
+end_time: 1716481485052
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 0d1cf2a8cf514ffd9ab7ede9b2de2720
+run_name: puzzled-ox-943
+run_uuid: 0d1cf2a8cf514ffd9ab7ede9b2de2720
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1716475038177
+status: 3
+tags: []
+user_id: pc
